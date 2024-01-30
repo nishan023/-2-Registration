@@ -16,13 +16,7 @@
 
 import { z } from 'zod'
 
-export const putTodoDto = z.object({
-    params: z.object({
-        id: z.string().refine((value) => !isNaN(Number(value)), {
-            message: 'ID must be a number',
-        }),
-    }),
-})
+
 
 export const putTodoDtobody = z.object({
     body: z.object({

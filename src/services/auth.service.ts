@@ -1,67 +1,59 @@
-import prisma from '../libs/prisma'
-import * as jwt from 'jsonwebtoken'
-import bcrypt from 'bcryptjs'
-import { signupBodySchema } from '../validators/auth.validator'
-import { z } from 'zod'
-import Boom from '@hapi/boom'
+import User  from '../models/users.models';
+import bcrypt from 'bcryptjs';
+import { signupBodySchema } from '../validators/auth.validator';
+import { z } from 'zod';
+import Boom from '@hapi/boom';
 import {
-    createAccessToken,
-    createRefreshToken,
-    verifyRefreshToken,
-} from '../utils/token.util'
+  createAccessToken,
+  createRefreshToken,
+  verifyRefreshToken,
+} from '../utils/token.util';
 
-export const signup = async (user: z.infer<typeof signupBodySchema>) => {
-    const { email, password } = user
-    try {
-      return  await prisma.user.create({
-            data: {
-                email,
-                password: await bcrypt.hash(password, 10),
-            },
-            select: {
-                id: true,
-                email: true,
-                // password: true,
-            },
-        })
-    } catch (e: any) {
-        if (
-            e.code === 'P2002' &&
-            e.meta?.target &&
-            e.meta?.target[0] === 'email'
-        ) {
-            throw Boom.conflict('User with this email already exists')
-        } else {
-            throw e
-        }
+export const signup = async (
+  user: z.infer<typeof signupBodySchema>
+) => {
+  const { email, password, is_admin } = user;
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    return await User.create({
+      email,
+      password: hashedPassword,
+      is_admin,
+    });
+  } catch (e: any) {
+    if (e.code === 11000 && e.keyPattern?.email) {
+      throw Boom.conflict('User with this email already exists');
+    } else {
+      throw e;
     }
-}
-
+  }
+};
 
 export async function login(email: string, password: string) {
-    const user = await prisma.user.findFirst({ where: { email } })
-    if (!user) {
-        throw Boom.badRequest('Username or password is incorrect.')
-    }
+  const user = await User.findOne({ email });
 
-    const passwordMatch = await bcrypt.compare(password, user.password)
+  if (!user) {
+    throw Boom.badRequest('Username or password is incorrect.');
+  }
 
-    if (!passwordMatch) {
-        throw Boom.badRequest('Username or password is incorrect.')
-    }
+  const passwordMatch = await bcrypt.compare(password, user.password);
 
-    const accessToken = createAccessToken(user.id,user.is_admin)
+  if (!passwordMatch) {
+    throw Boom.badRequest('Username or password is incorrect.');
+  }
 
-    const refreshToken = createRefreshToken(user.id,user.is_admin)
+  const accessToken = createAccessToken(user._id, user.is_admin);
 
-    return { accessToken, refreshToken }
+  const refreshToken = createRefreshToken(user._id, user.is_admin);
+
+  return { accessToken, refreshToken };
 }
 
 export async function refresh(refreshToken: string) {
-    try {
-        const decodedToken: any = verifyRefreshToken(refreshToken)
-        return createAccessToken(decodedToken.userId, decodedToken.isAdmi)
-    } catch (error) {
-        throw Boom.unauthorized('User is not logged in')
-    }
+  try {
+    const decodedToken: any = verifyRefreshToken(refreshToken);
+    return createAccessToken(decodedToken.userId, decodedToken.isAdmin);
+  } catch (error) {
+    throw Boom.unauthorized('User is not logged in');
+  }
 }

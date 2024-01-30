@@ -1,70 +1,63 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { PrismaClient } from '@prisma/client'
+import Todo from '../models/todos.models'
 import Boom from '@hapi/boom'
-const prisma = new PrismaClient()
 
-//POST todos
+// POST todos
 export const postTodo = async (body: any) => {
     const { title, status } = body
-    return await prisma.todo.create({
-        data: {
+    try {
+        const newTodo = new Todo({
             title,
             status,
-        },
-    })
+        })
+        return await newTodo.save()
+    } catch (err: any) {
+        if (err.code == 11000) {
+            throw Boom.conflict('A todo with this title already exists', err)
+        } else {
+            throw Boom.internal('Internal Server Error', {
+                details: 'Other error',
+            })
+        }
+    }
 }
 
 // GET todos by id WITH ERROR
 export const getTodo = async (id: any) => {
     try {
-        return await prisma.todo.findUniqueOrThrow({
-            where: {
-                id: Number(id),
-            },
-        })
+        return await Todo.findById(id)
     } catch (err: any) {
-        if (err.code === 'P2025') throw Boom.notFound('Post not found ')
-        else throw err
+        throw Boom.notFound('Todo not found', err)
     }
 }
 
-//DELETE  by id
+// Get all todos
+export const getTodosAll = async () => {
+    try {
+        return await Todo.find()
+    } catch (err: any) {
+        throw Boom.badImplementation('Failed to get todos', err)
+    }
+}
+
+// DELETE by id
 export const deleteTodo = async (id: any) => {
     try {
-        await prisma.todo.findUniqueOrThrow({
-            where: {
-                id: Number(id),
-            },
-        })
-        return await prisma.todo.delete({
-            where: {
-                id: Number(id),
-            },
-        })
+        return await Todo.findByIdAndDelete(id)
     } catch (err: any) {
-        if (err.code === 'P2025') throw Boom.notFound('Post not found')
-        else throw err
+        throw Boom.notFound('Todo not found', err)
     }
 }
 
-//UPDATE by id
+// UPDATE by id
 export const updateTodo = async (id: any, body: any) => {
     const { title, status } = body
     try {
-        await prisma.todo.findUniqueOrThrow({
-            where: { id: Number(id) },
-        })
-        return await prisma.todo.update({
-            where: { id: Number(id) },
-            data: {
-                title: title,
-                status: status,
-            },
-        })
+        return await Todo.findByIdAndUpdate(
+            id,
+            { title, status },
+            { new: true, runValidators: true }
+        )
     } catch (err: any) {
-        if (err.code === 'P2025') throw Boom.notFound('Post not found')
-        else throw err
+        throw Boom.notFound('Todo not found', err)
     }
 }

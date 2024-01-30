@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Request, Response, NextFunction } from 'express'
 import * as todoService from '../services/todo.service'
 
@@ -23,6 +19,20 @@ export const getTodosByID = async (
 ) => {
     try {
         const response = await todoService.getTodo(req.params.id)
+        res.json(response)
+    } catch (err) {
+        next(err)
+    }
+}
+
+//GET todos All
+export const getTodosAll = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const response = await todoService.getTodosAll()
         res.json(response)
     } catch (err) {
         next(err)
