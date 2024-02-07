@@ -7,7 +7,7 @@ export const postTodos = async (
     res: Response,
     next: NextFunction
 ) => {
-    const response = await todoService.postTodo(req.body)
+    const response = await todoService.post(req.body)
     res.send(response)
 }
 

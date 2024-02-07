@@ -3,8 +3,6 @@ import { Router } from 'express'
 import * as todoController from '../controller/todo.controller'
 import { validate } from '../utils/validate'
 import { postTodoDto } from '../validators/post-todo.validator'
-import { putTodoDtobody } from '../validators/put-todo.validator'
-import { deleteTodoDto } from '../validators/delete-todo.validator'
 import {
     authenticateToken,
     isAdmin,
@@ -14,7 +12,7 @@ const router = Router()
 //POST to database
 router.post(
     '/',
-    validate(postTodoDto),
+    // validate(postTodoDto),
     authenticateToken,
     todoController.postTodos
 )
@@ -28,15 +26,13 @@ router.get('/', authenticateToken, todoController.getTodosAll)
 //DELETE by id
 router.delete(
     '/:id',
-    validate(deleteTodoDto),
     authenticateToken,
     todoController.deleteTodosByID
 )
 
 //UPDATE/PUT by id
-router.put(
+router.patch(
     '/:id',
-    validate(putTodoDtobody),
     authenticateToken,
     todoController.updateTodo
 )

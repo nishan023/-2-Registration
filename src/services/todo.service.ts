@@ -1,3 +1,4 @@
+import { log } from 'console'
 import Todo from '../models/todos.models'
 import Boom from '@hapi/boom'
 
@@ -5,22 +6,35 @@ import Boom from '@hapi/boom'
 export const postTodo = async (body: any) => {
     const { title, status } = body
     try {
-        const newTodo = new Todo({
-            title,
-            status,
+        console.log("Error on line no 8")
+        return await Todo.create({
+            data: {
+                title,
+                status,
+            },
         })
-        return await newTodo.save()
     } catch (err: any) {
-        if (err.code == 11000) {
-            throw Boom.conflict('A todo with this title already exists', err)
-        } else {
-            throw Boom.internal('Internal Server Error', {
-                details: 'Other error',
-            })
+        console.log("error on line no 8", err);
+        
+            throw Boom.internal('Internal Server Error', err)
+            }
         }
-    }
-}
 
+
+
+        //pods
+
+        export const post=async(body:any)=>{
+            const{title,status}=body;
+            try {
+                return await Todo.create(title,status);
+                
+            } catch (error:any) {
+                throw Boom.badData(error);
+                
+            }
+
+        }
 // GET todos by id WITH ERROR
 export const getTodo = async (id: any) => {
     try {
