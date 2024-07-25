@@ -22,9 +22,9 @@ export const studentRegistrationBodySchema = z.object({
             required_error: 'Birth Date is required',
         })
         .refine((date) => !isNaN(Date.parse(date)), 'Invalid date format'),
-    gender: z.enum(['Male', 'Female', 'Other'], {
-        required_error: 'Gender is required',
-    }),
+    // gender: z.enum(['Male', 'Female', 'Other'], {
+    //     required_error: 'Gender is required',
+    // }),
     permanentAddress: z
         .string({
             required_error: 'Permanent Address is required',

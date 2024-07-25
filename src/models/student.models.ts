@@ -10,6 +10,11 @@ const studentSchema = new mongoose.Schema({
     temporaryAddress: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
+    status: {
+        type: String,
+        enum: ['accepted', 'rejected', 'pending'],
+        default: 'pending',
+    },
 })
 
 export default mongoose.model('Student', studentSchema)
