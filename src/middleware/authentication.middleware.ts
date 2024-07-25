@@ -24,16 +24,16 @@ export function authenticateToken(
     }
 }
 
-export function isAdmin(
-    req: RequestWithUserObject,
-    res: Response,
-    next: NextFunction
-) {
-    const { user } = req
+// export function isAdmin(
+//     req: RequestWithUserObject,
+//     res: Response,
+//     next: NextFunction
+// ) {
+//     const { user } = req
 
-    if (user && user.isAdmin) {
-        next()
-    } else {
-        throw Boom.forbidden('User is not an admin')
-    }
-}
+//     if (user && user.isAdmin) {
+//         next()
+//     } else {
+//         throw Boom.forbidden('User is not an admin')
+//     }
+// }

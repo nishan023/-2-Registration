@@ -5,45 +5,59 @@ import express, {
     Response,
 } from 'express'
 import cors from 'cors'
-import todosRouter from './routes/todo.router'
+import { errorHandler } from './utils/errorHandler'
+
 import userRouter from './routes/auth.router'
 import buildError from './utils/build-error'
+import registerStudentRouter from './routes/registration.router'
 import startingSchema from './connection/db.connection'
-import dotenv from 'dotenv';
-dotenv.config();
+import dotenv from 'dotenv'
+
+dotenv.config()
 const app = express()
 
 app.use(express.json())
+app.use(cors())
+
 const port = process.env.PORT || 3000
 
 const start = async () => {
-    //connect mongodb
+    // Connect to MongoDB
     try {
         await startingSchema(process.env.MONGO_URL)
             .then(() => {
-                console.log('Connected To MongoDB Database SuccessFully ...')
+                console.log('Connected to MongoDB Database Successfully ...')
             })
             .catch((err: any) => {
-                console.log(err, 'MongoDB connection failed')
+                console.error('MongoDB connection failed:', err)
             })
-        app.listen(port, () => {
-            console.log(`Server is running on ${port}`)
-        })
     } catch (err) {
-        console.log(err)
+        console.error('Error starting the server:', err)
     }
 }
 
-start();
-app.use(cors())
-app.use('/todos', todosRouter)
-app.use('/user', userRouter)
+start()
 
-//Error handler
+app.use('/api', [userRouter,registerStudentRouter])
+app.use(errorHandler)
 
+// Catch-all route for 404 - Not Found
+app.use((req: Request, res: Response, next: NextFunction) => {
+    const error = buildError({
+        statusCode: 404,
+        message: 'API endpoint not found',
+    })
+    res.status(error.code).json({ error })
+})
+
+// Error handling middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     const error = buildError(err)
-    res.status(error.code).json({ error })
+    res.status(error.code).json({ message: 'Error occoured' })
+})
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`)
 })
 
 export default app

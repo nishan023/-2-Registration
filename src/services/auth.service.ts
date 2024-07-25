@@ -1,4 +1,4 @@
-import User from '../models/users.models'
+import User from '../models/admin.models'
 import bcrypt, { hash } from 'bcryptjs'
 import { signupBodySchema } from '../validators/auth.validator'
 import { z } from 'zod'
@@ -10,7 +10,7 @@ import {
 } from '../utils/token.util'
 
 export const signup = async (user: z.infer<typeof signupBodySchema>) => {
-    const { email, password, is_admin } = user
+    const { email, password } = user
     try {
         // Check if user with the same email already exists
         const existingUser = await User.findOne({ where: { email: email } })
@@ -22,7 +22,6 @@ export const signup = async (user: z.infer<typeof signupBodySchema>) => {
         return await User.create({
             email,
             password: hashedPassword,
-            is_admin,
         })
     } catch (e: any) {
         if (e.code === 11000 && e.keyPattern?.email) {
@@ -46,9 +45,9 @@ export async function login(email: string, password: string) {
         throw Boom.badRequest('Username or password is incorrect.')
     }
 
-    const accessToken = createAccessToken(user._id, user.is_admin)
+    const accessToken = createAccessToken(user._id)
 
-    const refreshToken = createRefreshToken(user._id, user.is_admin)
+    const refreshToken = createRefreshToken(user._id)
 
     return { accessToken, refreshToken }
 }
@@ -56,7 +55,7 @@ export async function login(email: string, password: string) {
 export async function refresh(refreshToken: string) {
     try {
         const decodedToken: any = verifyRefreshToken(refreshToken)
-        return createAccessToken(decodedToken.userId, decodedToken.isAdmin)
+        return createAccessToken(decodedToken.userId)
     } catch (error) {
         throw Boom.unauthorized('User is not logged in')
     }

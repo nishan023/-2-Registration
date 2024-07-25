@@ -1,13 +1,16 @@
 import { Router } from 'express'
 import { validate } from '../utils/validate'
-import {loginSchema, signupSchema } from '../validators/auth.validator'
+import { loginSchema, signupSchema } from '../validators/auth.validator'
 import * as AuthController from '../controller/auth.controller'
-
 
 const router = Router()
 
-router.post('/login', validate(loginSchema), AuthController.loginUser)
-router.post(`/signup`, validate(signupSchema), AuthController.registerUser)
+router.post('/admin/login', validate(loginSchema), AuthController.loginAdmin)
+router.post(
+    `/admin/signup`,
+    validate(signupSchema),
+    AuthController.registerAdmin
+)
 
 router.post('/refresh', AuthController.refreshToken)
 
@@ -22,6 +25,5 @@ router.post('/forgot-password', () => {
         'this method should send an email using sendgrid to the user with forgot password link'
     )
 })
-
 
 export default router

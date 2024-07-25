@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import * as Authservice from '../services/auth.service'
 import { loginBodySchema, signupBodySchema } from '../validators/auth.validator'
 
-export const registerUser = async (
+export const registerAdmin = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -13,14 +13,13 @@ export const registerUser = async (
         )
         res.json({
             message: 'User registered successfully',
-            user: createdUser,
         })
     } catch (err) {
         next(err)
     }
 }
 
-export const loginUser = async (
+export const loginAdmin = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -32,10 +31,14 @@ export const loginUser = async (
             email,
             password
         )
-        res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
-            path: '/api/auth/refresh',
-        }).json({ accessToken })
+        // res.cookie('refreshToken', refreshToken, {
+        //     httpOnly: true,
+        //     path: '/api/auth/refresh',
+        // }).json({ accessToken }) ,
+        res.json({
+            message: 'User login successfully',
+            Accesstoken: accessToken,
+        })
     } catch (error) {
         next(error)
     }

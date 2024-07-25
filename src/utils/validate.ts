@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import { NextFunction, Request, Response } from 'express'
 import { AnyZodObject } from 'zod'
 

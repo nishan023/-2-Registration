@@ -1,8 +1,8 @@
 import * as jwt from 'jsonwebtoken'
 
-export const createAccessToken = (userId: any, isAdmin: any) => {
+export const createAccessToken = (userId: any) => {
     return jwt.sign(
-        { userId, isAdmin },
+        { userId },
         process.env.JWT_ACCESS_TOKEN_SECRET as string,
         {
             expiresIn: '1d',
@@ -10,9 +10,9 @@ export const createAccessToken = (userId: any, isAdmin: any) => {
     )
 }
 
-export const createRefreshToken = (userId: any, isAdmin: any) => {
+export const createRefreshToken = (userId: any) => {
     return jwt.sign(
-        { userId, isAdmin },
+        { userId },
         process.env.JWT_REFRESH_TOKEN_SECRET as string,
         {
             expiresIn: '1d',
