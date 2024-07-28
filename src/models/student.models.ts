@@ -5,16 +5,18 @@ const studentSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     phoneNumber: { type: String, required: true },
     birthDate: { type: Date, required: true },
-    gender: { type: String, required: true },
+    gender: { type: String, 
+        enum:['Male','Female','Others'],
+        required: true },
     permanentAddress: { type: String, required: true },
     temporaryAddress: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
     status: {
         type: String,
         enum: ['accepted', 'rejected', 'pending'],
         default: 'pending',
     },
+},{
+    timestamps:true
 })
 
 export default mongoose.model('Student', studentSchema)

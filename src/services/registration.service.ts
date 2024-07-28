@@ -22,13 +22,7 @@ export const createStudent = async (studentData: StudentData) => {
         temporaryAddress,
     } = studentData
     const newStudent = new Student({
-        fullName: fullName,
-        email: email,
-        phoneNumber: phoneNumber,
-        birthDate: birthDate,
-        glingender: gender,
-        permanentAddress: permanentAddress,
-        temporaryAddress: temporaryAddress,
+        ...studentData
     })
     await newStudent.save()
     const message = 'save successfully'

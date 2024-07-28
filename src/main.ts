@@ -20,6 +20,8 @@ app.use(express.json())
 app.use(cors())
 
 const port = process.env.PORT || 3000
+app.use('/api', [userRouter,registerStudentRouter])
+app.use(errorHandler)
 
 const start = async () => {
     // Connect to MongoDB
@@ -38,8 +40,6 @@ const start = async () => {
 
 start()
 
-app.use('/api', [userRouter,registerStudentRouter])
-app.use(errorHandler)
 
 // Catch-all route for 404 - Not Found
 app.use((req: Request, res: Response, next: NextFunction) => {
