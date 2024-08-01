@@ -7,7 +7,7 @@ import { studentRegistrationSchema} from '../validators/registration.validator';
 const registerStudentRouter = Router();
 
 registerStudentRouter.post('/student/register',validate(studentRegistrationSchema),registerStudentController.registerStudent);
-registerStudentRouter.get('/dashboard/students/',registerStudentController.getallStudents);
+registerStudentRouter.get('/students/dashboard/',registerStudentController.getallStudents);
 registerStudentRouter.patch('/dashboard/student/accept/:id',registerStudentController.acceptedStudent)
 registerStudentRouter.patch('/dashboard/student/reject/:id',registerStudentController.rejectedStudent)
 

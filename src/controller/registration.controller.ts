@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
 import * as RegisterStudentService from '../services/registration.service'
-import { AppError } from '../utils/appError'
 
 export const registerStudent = async (
     req: Request,
@@ -9,7 +8,6 @@ export const registerStudent = async (
 ) => {
     try {
         const CreateStudentDto: RegisterStudentService.StudentData = req.body
-        console.log(CreateStudentDto)
 
         const student =
             await RegisterStudentService.createStudent(CreateStudentDto)
@@ -48,7 +46,6 @@ export const acceptedStudent = async (
     try {
         const { id } = req.params
         const acceptedStudent = await RegisterStudentService.acceptStudent(id)
-        console.log(`this is logging `, acceptedStudent)
 
         res.status(200).json({
             message: 'Student accept successfully',
@@ -68,7 +65,6 @@ export const rejectedStudent = async (
         const { id } = req.params
 
         const rejectedStudent = await RegisterStudentService.rejectStudent(id)
-        console.log(`this is loggong `, rejectedStudent)
 
         res.status(200).json({
             message: 'Student rejected successfully',
